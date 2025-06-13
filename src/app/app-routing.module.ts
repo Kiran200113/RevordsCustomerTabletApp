@@ -9,6 +9,7 @@ const routes: Routes = [
   {
     path: 'tab1',
     loadChildren: () => import('./tab1/tab1.module').then(m => m.Tab1PageModule)
+    // loadChildren: () => import('./NewMember/NewMember.module').then(m => m.NewMemberPageModule)
   },
   {
     path: 'tab2',
@@ -17,6 +18,10 @@ const routes: Routes = [
   {
     path: 'NewMember',
     loadChildren: () => import('./NewMember/NewMember.module').then(m => m.NewMemberPageModule)
+  },
+  {
+    path: 'VerifyOtp',
+    loadChildren: () => import('./VerifyOtp/VerifyOtp.module').then(m => m.VerifyOtpPageModule)
   },
   {
     path: 'NewMemberOptIn',

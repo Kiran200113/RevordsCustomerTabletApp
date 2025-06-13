@@ -8,6 +8,9 @@ import {
   CountdownConfig,
   CountdownEvent,
 } from 'ngx-countdown';
+import { BusinessProfileService } from '../api/services/businessProfileService';
+import { MemberWishlistService } from '../api/services/memberWishlistService';
+import { LoggingService } from '../api/services/loggingService';
 
 @Component({
   selector: 'app-favorites',
@@ -46,15 +49,21 @@ export class FavoritesPage implements OnInit {
         60),
     formatDate: ({ date }) => `${date / 1000}`,
   };
-  bgImgPath2: any =
-    CONSTANTS.DownloadAPK_ENDPOINT + localStorage.getItem('BgImg1');
+  bgImgPath2: any = localStorage.getItem('BgImg1');
   isTimeOut: any;
 
   constructor(
-    private _memberProfile: GetMemberProfileService,
-    private toastCtrl: ToastController,
+    private _loggingService: LoggingService,
+    private _memberWishlist: MemberWishlistService,
+    private _businessProfile: BusinessProfileService,
     private router: Router
-  ) {}
+  ) {
+    if (!localStorage.getItem('JWT_Token')) {
+      localStorage.clear();
+      this.router.navigate(['']);
+      return;
+    }
+  }
 
   @ViewChild('cdFavorite', { static: false })
   private countdownFavorite: CountdownComponent;
@@ -121,7 +130,7 @@ export class FavoritesPage implements OnInit {
       businessLocationID: business.id,
       baseLocationID: business.id,
     };
-    this._memberProfile.PostMemberWishlistByLike(wishlistData).subscribe(
+    this._memberWishlist.PostMemberWishlistByLike(wishlistData).subscribe(
       async (data) => {
         this.businessData.forEach((element: any) => {
           if (element.id == business.id) {
@@ -130,14 +139,14 @@ export class FavoritesPage implements OnInit {
         });
         // this.GetBusinessProfileForFavoriteList();
       },
-      async (error) => {
-        console.log(error);
+      async (error) => {       
+        this._loggingService.PostLogger('favorites-ts', 'likeProfile(business: any)', error.message);
       }
     );
   }
 
   async GetBusinessProfilesForFavorite() {
-    await this._memberProfile
+    await this._businessProfile
       .GetBusinessProfilesForFavorite(
         this.memberTableId,
         this.BusinessLocationID
@@ -145,12 +154,9 @@ export class FavoritesPage implements OnInit {
       .subscribe(
         (data: any) => {
           this.businessData = data;
-
           this.businessData.forEach((element: any) => {
-            element.imagePath =
-              CONSTANTS.DownloadAPK_ENDPOINT + element.imagePath;
-            element.logoPath =
-              CONSTANTS.DownloadAPK_ENDPOINT + element.logoPath;
+            element.imagePath = element.imagePath;
+            element.logoPath = element.logoPath;
             element.businessName =
               element.businessName.toString().length > 21
                 ? element.businessName.toString().substring(0, 20) + '...'
@@ -158,8 +164,8 @@ export class FavoritesPage implements OnInit {
             element.distance = Math.ceil(element.distance);
           });
         },
-        async (error) => {
-          console.log(error);
+        async (error) => {          
+          this._loggingService.PostLogger('favorites-ts', 'GetBusinessProfilesForFavorite()', error.message);
         }
       );
   }

@@ -1,6 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GetMemberProfileService } from '../api/services/get-member-profile.service';
-import { ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import * as CONSTANTS from '../api/services/Constants';
 import {
@@ -8,6 +6,11 @@ import {
   CountdownConfig,
   CountdownEvent,
 } from 'ngx-countdown';
+import { PromotionService } from '../api/services/promotionService';
+import { AutoPilotService } from '../api/services/autoPilotService';
+import { RewardConfigService } from '../api/services/rewardConfigService';
+import { BusinessProfileService } from '../api/services/businessProfileService';
+import { LoggingService } from '../api/services/loggingService';
 
 @Component({
   selector: 'app-customer-details',
@@ -19,7 +22,7 @@ export class CustomerDetailsPage implements OnInit {
   autopilotData: any;
   rewardData: any = [];
   showPromotionData: boolean = false;
-  showAutopilotData: boolean = false; 
+  showAutopilotData: boolean = false;
   showRewardData: boolean = false;
   memberId: any;
   memberTableId: any;
@@ -46,14 +49,24 @@ export class CustomerDetailsPage implements OnInit {
         60),
     formatDate: ({ date }) => `${date / 1000}`,
   };
-  bgImgPath2: any =
-    CONSTANTS.DownloadAPK_ENDPOINT + localStorage.getItem('BgImg1');
+  bgImgPath2: any = localStorage.getItem('BgImg1');
   isTimeOut: any;
+  isFavoriteListExist: any = false;
 
   constructor(
-    private _memberProfile: GetMemberProfileService,
+    private _loggingService: LoggingService,
+    private _rewardConfig: RewardConfigService,
+    private _autoPilotService: AutoPilotService,
+    private _promotionService: PromotionService,
+    private _businessProfile: BusinessProfileService,
     private router: Router
-  ) {}
+  ) {
+    if (!localStorage.getItem('JWT_Token')) {
+      localStorage.clear();
+      this.router.navigate(['']);
+      return;
+    }
+  }
 
   @ViewChild('cdDetails', { static: false })
   private countdownDetails: CountdownComponent;
@@ -94,6 +107,7 @@ export class CustomerDetailsPage implements OnInit {
       this.isSpinWheelInteger = true;
     }
 
+    this.GetBusinessProfilesForFavorite();
     this.GetPromotionsList();
     this.GetAutopilotList();
     this.GetRewardList();
@@ -104,7 +118,7 @@ export class CustomerDetailsPage implements OnInit {
   ngOnInit() {}
 
   async GetPromotionsList() {
-    await this._memberProfile
+    await this._promotionService
       .GetPromotionsByMemberId(this.BusinessLocationID, this.memberId)
       .subscribe(
         (data: any) => {
@@ -118,14 +132,15 @@ export class CustomerDetailsPage implements OnInit {
             this.showPromotionData = false;
           }
         },
-        async (error) => {
+        async (error) => {      
+          this._loggingService.PostLogger('customer-details-ts', 'GetPromotionsList()', error.message);
           this.showPromotionData = false;
         }
       );
   }
 
   async GetAutopilotList() {
-    await this._memberProfile
+    await this._autoPilotService
       .GetAutopilotByMemberId(this.BusinessGroupID, this.memberId)
       .subscribe(
         (data: any) => {
@@ -136,14 +151,15 @@ export class CustomerDetailsPage implements OnInit {
             this.showAutopilotData = false;
           }
         },
-        async (error) => {
+        async (error) => {          
+          this._loggingService.PostLogger('customer-details-ts', 'GetAutopilotList()', error.message);
           this.showAutopilotData = false;
         }
       );
   }
 
   async GetRewardList() {
-    await this._memberProfile
+    await this._rewardConfig
       .GetRewardByMemberId(this.BusinessGroupID, this.memberId)
       .subscribe(
         (data: any) => {
@@ -152,7 +168,8 @@ export class CustomerDetailsPage implements OnInit {
             this.showRewardData = true;
           }
         },
-        async (error) => {
+        async (error) => {        
+          this._loggingService.PostLogger('customer-details-ts', 'GetRewardList()', error.message);
           if (error.status == 404) {
             this.showRewardData = false;
           } else {
@@ -166,7 +183,31 @@ export class CustomerDetailsPage implements OnInit {
     if (!this.isTimeOut) {
       this.isLoading = false;
       this.countdownDetails.stop();
-      this.router.navigate(['/Favorites']);
+      if (this.isFavoriteListExist) {
+        this.router.navigate(['/Favorites']);
+      } else {
+        this.router.navigate(['/tab1']);
+      }
     }
+  }
+
+  async GetBusinessProfilesForFavorite() {
+    await this._businessProfile
+      .GetBusinessProfilesForFavorite(
+        this.memberTableId,
+        this.BusinessLocationID
+      )
+      .subscribe(
+        (data: any) => {
+          if (data.length == 0) {
+            this.isFavoriteListExist = false;
+          } else {
+            this.isFavoriteListExist = true;
+          }
+        },
+        async (error) => {   
+          this._loggingService.PostLogger('customer-details-ts', 'GetBusinessProfilesForFavorite()', error.message);
+        }
+      );
   }
 }

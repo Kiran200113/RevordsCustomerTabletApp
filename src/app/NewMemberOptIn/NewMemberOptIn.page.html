@@ -3,10 +3,19 @@
   <!-- <div class="loginbgblack"></div> -->
   <div class="RewardContainer" *ngIf="!isLoading">
     <div class="body" [formGroup]="multistep">
+      <div *ngIf="showToast" class="custom-toast" [ngClass]="{'toast-show': showToast, 'toast-hide': !showToast}">
+        <p style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          ">
+          {{toastMsg}}
+          <img src="../../assets/cancel.png" style="width: 8%; float: right" (click)="dismissToast()" />
+        </p>
+      </div>
+
       <div class="wrapper" formGroupName="addMemberDetails">
-        <img
-          src="../../assets/backButton.png"
-          style="
+        <img src="../../assets/backButton.png" style="
             position: absolute;
             width: 4%;
             top: 2%;
@@ -14,17 +23,46 @@
             background: white;
             border-radius: 50%;
             padding: 1%;
-          "
-          (click)="back()"
-        />
+          " (click)="back()" />
 
         <div class="countDownText">
           <!-- {{remainingTime}} -->
-          <countdown
-            #cdNewOpt
-            (event)="handleEventNewOpt($event)"
-            [config]="configNewOpt"
-          ></countdown>
+          <countdown #cdNewOpt (event)="handleEventNewOpt($event)" [config]="configNewOpt"></countdown>
+        </div>
+
+        <div class="text-center">
+          <img src="https://s3.us-west-1.amazonaws.com/revords.live.files/RevordsTrademarkLogo.png" width="50%" />
+        </div>
+
+        <div class="d-flex align-items-center" style="margin: 5% 0% 1% 0%" *ngIf="isAgeRestriction">
+          <ion-col size="2" style="color: #272727">Birthdate</ion-col>
+          <ion-col size="10" class="d-flex justify-content-center align-items-center form-field"
+            style="height: 100%; margin-bottom: 0 !important">
+            <input formControlName="birthdate" type="text" placeholder="MM/DD/YYYY" maxlength="10" inputmode="numeric"
+              pattern="[0-9/]*" (keydown)="onKeyDown($event)" (input)="formatDate($event)" (blur)="onInputBlur()" />
+          </ion-col>
+        </div>
+
+        <div style="height: 15px; margin-bottom: 3%; color: #974141" class="d-flex align-items-center"
+          *ngIf="isAgeRestriction">
+          <ion-col size="2"></ion-col>
+          <ion-col size="10">
+            <div
+              *ngIf="multistep.get('addMemberDetails.birthdate')?.invalid && multistep.get('addMemberDetails.birthdate')?.touched">
+              <div *ngIf="multistep.get('addMemberDetails.birthdate')?.hasError('required')">
+                Birth date is required.
+              </div>
+              <div *ngIf="multistep.get('addMemberDetails.birthdate')?.hasError('invalidDate')">
+                Enter a valid birth date.
+              </div>
+              <div *ngIf="multistep.get('addMemberDetails.birthdate')?.hasError('futureDate')">
+                Birth date cannot be in the future.
+              </div>
+              <div *ngIf="multistep.get('addMemberDetails.birthdate')?.hasError('underage')">
+                You must be atleast {{ageRestrictionYear}} years old to proceed.
+              </div>
+            </div>
+          </ion-col>
         </div>
 
         <p style="margin-top: 3%; color: #213139" *ngIf="dynamicField != undefined && dynamicField.isOptInRequired">
@@ -39,16 +77,9 @@
         </div>
         <div style="margin-top: 2%" *ngIf="isAgeRestriction">
           <ion-col size="6" style="color: #272727">
-            <ion-checkbox
-              labelPlacement="end"
-              formControlName="isOverAged"
-              [checked]="isOverAged"
-              [disabled]="isOverAged"
-              >I hereby certify that I am at least 21 years old.<span
-                style="color: #c90000"
-                >*</span
-              ></ion-checkbox
-            >
+            <ion-checkbox labelPlacement="end" formControlName="isOverAged" [checked]="isOverAged"
+              [disabled]="isOverAged">I hereby certify that I am at least {{ageRestrictionYear}} years old.<span
+                style="color: #c90000">*</span></ion-checkbox>
           </ion-col>
         </div>
         <button type="submit" class="btn mt-3" (click)="submit()">
@@ -62,11 +93,8 @@
     <div id="popup" class="popup">
       <!-- <h2 class="mb-2">Great!</h2> -->
       <div [innerHTML]="OptInPopupText"></div>
-      <button
-        (click)="closePopupOptin()"
-        class="btn p-2 m-1"
-        style="background-color: #3e78a3; color: #fff; font-size: 20px"
-      >
+      <button (click)="closePopupOptin()" class="btn p-2 m-1"
+        style="background-color: #3e78a3; color: #fff; font-size: 20px">
         Continue
         <img style="width: 4%" src="./assets/arrowright.png" />
       </button>

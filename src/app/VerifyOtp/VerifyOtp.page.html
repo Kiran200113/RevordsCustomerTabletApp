@@ -1,0 +1,79 @@
+<ion-content [fullscreen]="true">
+  <div class="loginbg" [ngStyle]="{'background-image': 'url(' + bgImg + ')' }"></div>
+  <!-- <div class="loginbgblack"></div> -->
+  <div class="RewardContainer" *ngIf="!isLoading">
+    <div class="body">
+      <div *ngIf="showToast" class="custom-toast" [ngClass]="{'toast-show': showToast, 'toast-hide': !showToast}">
+        <p style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          ">
+          {{toastMsg}}
+          <img src="../../assets/cancel.png" style="width: 8%; float: right" (click)="dismissToast()" />
+        </p>
+      </div>
+      <div class="wrapper">
+        <img src="../../assets/backButton.png" style="
+            position: absolute;
+            width: 4%;
+            top: 2%;
+            left: 2%;
+            background: white;
+            border-radius: 50%;
+            padding: 1%;
+          " (click)="back()" />
+
+        <div class="countDownText">
+          <countdown #cd (event)="handleEvent($event)" [config]="configVerifyOTP"></countdown>
+        </div>
+
+        <div class="text-center">
+          <img src="https://s3.us-west-1.amazonaws.com/revords.live.files/RevordsTrademarkLogo.png" width="50%" />
+        </div>
+
+        <h5 style="text-align: center; color: #213139; margin: 5%">
+          We have sent an OTP to your registered number
+          +1 {{displayNumber}}. Please enter the OTP to sign in
+          and claim your rewards.
+        </h5>
+
+        <div class="otp-container">
+          <input type="text" maxlength="1" (input)="moveFocus($event, 1)" (keydown)="handleBackspace($event, -1)" #otp1
+            pattern="[0-9]*" inputmode="numeric" (click)="preventCursor($event)">
+          <input type="text" maxlength="1" (input)="moveFocus($event, 2)" (keydown)="handleBackspace($event, 0)" #otp2
+            pattern="[0-9]*" inputmode="numeric" (click)="preventCursor($event)">
+          <input type="text" maxlength="1" (input)="moveFocus($event, 3)" (keydown)="handleBackspace($event, 1)" #otp3
+            pattern="[0-9]*" inputmode="numeric" (click)="preventCursor($event)">
+          <input type="text" maxlength="1" (input)="moveFocus($event, 4)" (keydown)="handleBackspace($event, 2)" #otp4
+            pattern="[0-9]*" inputmode="numeric" (keydown)="onOTPKeyDown($event)" (click)="preventCursor($event)">
+        </div>
+
+        <button type="submit" class="btn mt-3" (click)="verifyOtp()">
+          Verify OTP
+        </button>
+
+        <div class="text-center mt-4">
+          <ion-col size="8" style="color: #272727">Didn't receive yet?</ion-col>
+          <ion-col size="4" style="color: #272727" *ngIf="!isResendAvailable"> wait for <countdown #cdResend
+              (event)="handleEventResendTimer($event)" [config]="resendBtnConfig"></countdown> seconds</ion-col>
+          <ion-col size="4"
+            style="color: #272727; text-decoration: underline; font-size: 125%; font-weight: 700; padding-left: 2%;"
+            *ngIf="isResendAvailable" (click)="resendOtp()">Resend otp</ion-col>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="loadContainer" *ngIf="isLoading">
+    <div class="loading-container">
+      <div class="loading"></div>
+      <div id="loading-text">
+        <img class="logo-dWq" src="https://s3.us-west-1.amazonaws.com/revords.live.files/RevordsTrademarkLogo.png" />
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<!--  -->

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../api/model';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
 import { GetMemberProfileService } from '../api/services/get-member-profile.service';
 import * as CONSTANTS from '../api/services/Constants';
-import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
+import { UserService } from '../api/services/userService';
+import { LoggingService } from '../api/services/loggingService';
+import { DynamicFieldService } from '../api/services/dynamicFieldService';
 
 @Component({
   selector: 'app-login',
@@ -17,44 +18,34 @@ export class LoginComponent implements OnInit {
   userData: any;
   showLoginForm: boolean = false;
   isLoadingMember = false;
-  updateStatus: string = 'Update not started';
+  showToast: boolean = false;
+  toastMsg: any = '';
+  toastID: any;
+  ApiTimeoutPeriod: any;
+
   constructor(
     private user: User,
     private router: Router,
-    private toastCtrl: ToastController,
-    private memberService: GetMemberProfileService,private _deploy: Deploy
-  ) {}
-
-  ngOnInit() {
-    
+    private _loggingService: LoggingService,
+    private _userService: UserService,
+    private _dynamicFieldService: DynamicFieldService
+  ) {
+    this.GetErrorMessageForTabletApp();
   }
-  async performManualUpdate() {
-    this.updateStatus = 'Checking for Update';
-    const update = await this._deploy.checkForUpdate()
-    if (update.available){
-      this.updateStatus = 'Update found. Downloading update';
-      await this._deploy.downloadUpdate((progress) => {
-        console.log(progress);
-      })
-      this.updateStatus = 'Update downloaded. Extracting update';
-      await this._deploy.extractUpdate((progress) => {
-        console.log(progress);
-      })
-      console.log('Reloading app');
-      this.updateStatus = 'Update extracted. Reloading app';
-      await this._deploy.reloadApp();
-    } else {
-      console.log('No update available');
-      this.updateStatus = 'No update available';
-    }
-   }
+
+  ngOnInit() { }
+
   signUp() {
     this.showLoginForm = true;
     this.isLoadingMember = true;
-    this.memberService.Users(this.Email, this.Password).subscribe(
+    let details = {
+      userName: this.Email,
+      password: this.Password,
+      tabletFlag: 1
+    };
+    this._userService.Users(details).subscribe(
       (data: any) => {
         this.userData = data;
-
         if (
           this.userData != '' &&
           this.userData != null &&
@@ -73,6 +64,8 @@ export class LoginComponent implements OnInit {
           this.user.sourceName = this.userData.business[0].sourceName;
           this.user.IsAgeRestriction =
             this.userData.business[0].isAgeRestriction;
+          this.user.accessToken = this.userData.accessToken;
+          this.user.toid = this.userData.toid;
         }
 
         localStorage.setItem(
@@ -83,6 +76,11 @@ export class LoginComponent implements OnInit {
           'businessGroupId',
           String(this.user.businessGroupId)
         );
+        if (this.user.toid != null) {
+          localStorage.setItem('TOID', String(this.user.toid));
+        } else {
+          localStorage.setItem('TOID', '');
+        }
         localStorage.setItem(
           'businessGroupImage',
           String(this.user.businessGroupImage)
@@ -101,6 +99,7 @@ export class LoginComponent implements OnInit {
           String(this.user.businessGroupName)
         );
         localStorage.setItem('sourceName', String(this.user.sourceName));
+        localStorage.setItem('JWT_Token', String(this.user.accessToken));
 
         this.isLoadingMember = false;
         this.router.navigate(['tab1']);
@@ -108,22 +107,45 @@ export class LoginComponent implements OnInit {
       },
       async (error: any) => {
         if (error.status == 404) {
-          this.memberService.toastMessage(
-            'Please enter valid credentials.',
-            2500,
-            'custom-toastDanger'
-          );
-        } else {
-          this.memberService.toastMessage(
-            'Something went wrong. Please try again.',
-            2500,
-            'custom-toast'
-          );
-        }
+          this.showToast = true;
+          this.toastMsg = 'Please enter valid credentials.';
 
+          // Hide the toast after 2 seconds
+          this.toastID = setTimeout(() => {
+            this.showToast = false;
+          }, 5000);
+        } else {
+          this.showToast = true;
+          this.toastMsg = this.ApiTimeoutPeriod.errorMessage;
+
+          // Hide the toast after 2 seconds
+          this.toastID = setTimeout(() => {
+            this.showToast = false;
+          }, 5000);
+        }
+        this._loggingService.PostLogger('login-ts', 'signUp()', error.message);
         this.isLoadingMember = false;
         this.showLoginForm = false;
       }
     );
+  }
+
+  dismissToast() {
+    this.showToast = false;
+    clearTimeout(this.toastID);
+  }
+
+  GetErrorMessageForTabletApp() {
+    this._dynamicFieldService.GetErrorMessageForTabletApp().subscribe((data: any) => {
+      this.ApiTimeoutPeriod = data;
+      localStorage.setItem("ErroMessageData", JSON.stringify(data));
+    }, async (error) => {
+      // this._appService.PostLogFromFrontEnd('tab2-ts', 'ngOnInit()', error.message);
+      // this._appService.toastMessage(
+      //   'Something went wrong, please try again or contact support.',
+      //   2000,
+      //   'custom-toast'
+      // );
+    })
   }
 }

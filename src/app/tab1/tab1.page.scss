@@ -1,18 +1,22 @@
 html {
   font-size: 62.5%;
 }
+
 * {
   margin: 0;
   padding: 0;
   font-family: "Satoshi Variable", "Source Sans Pro";
 }
+
 ul,
 li {
   list-style: none;
 }
+
 input {
   border: none;
 }
+
 body {
   width: 144rem;
 }
@@ -29,8 +33,6 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   position: absolute;
-  // background: url(../../assets/image-4-bg-cWu.png) center center/cover no-repeat;
-  // background: url(http://ho.hitechprojects.co.in:8101/wwwroot/Promo41777583677.png) center center/cover no-repeat;
 }
 
 .loginbgblack {
@@ -50,8 +52,8 @@ body {
 .logo {
   height: 50%;
 }
+
 .logobg {
-  // background-color: #000000;
   height: 45%;
   border-radius: 1.5rem;
   padding: 1% 4%;
@@ -61,7 +63,11 @@ body {
   height: 100%;
   width: 100%;
   padding: 1%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+
 .instruction {
   height: 15%;
   display: flex;
@@ -72,10 +78,12 @@ body {
   padding: 0% 4%;
   margin-bottom: 2%;
 }
+
 .instructionImg {
   height: 40%;
   margin-right: 4%;
 }
+
 .instructionText {
   font-size: 125%;
   color: #fff;
@@ -89,8 +97,9 @@ body {
   border-radius: 1.5rem;
   padding: 3%;
   width: 90%;
-  height: 90%;
+  height: 100%;
 }
+
 .keypad {
   margin-bottom: 3%;
   width: 100%;
@@ -100,6 +109,7 @@ body {
   height: 75%;
   margin-top: 5%;
 }
+
 .keypadInput {
   font-weight: 500;
   text-transform: uppercase;
@@ -110,7 +120,6 @@ body {
   justify-content: center;
   border: solid 0.1rem #d6b28d;
   box-sizing: border-box;
-  // box-shadow: inset 0 0.5rem 1rem rgba(0, 0, 0, 0.0500000007), inset 0.5rem 0 1rem rgba(0, 0, 0, 0.0500000007);
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
     rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
@@ -121,6 +130,7 @@ body {
   height: 20%;
   margin-bottom: 1%;
 }
+
 .keypadInputLabel {
   font-size: 36px;
   min-height: 0;
@@ -131,11 +141,13 @@ body {
   display: flex;
   align-items: center;
 }
+
 .keypadbtnRow {
   width: 100%;
   height: 20%;
   column-gap: 3%;
 }
+
 .keypadBtn {
   width: 32%;
   height: 85%;
@@ -148,21 +160,21 @@ body {
   justify-content: center;
   border: solid 0.1rem #d6b28d;
   box-sizing: border-box;
-  // box-shadow: inset 0 0.5rem 1rem rgba(0, 0, 0, 0.0500000007), inset 0.5rem 0 1rem rgba(0, 0, 0, 0.0500000007);
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
     rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
   background-color: #fbf7f2;
   border-radius: 1rem;
 }
+
 .keypadBtn:active {
   transform: scale(0.9);
 }
+
 .keypadText {
-  text-align: center;
+  // text-align: center;
   font-weight: 700;
   color: #a87b38;
-
   font-size: 90%;
 }
 
@@ -390,12 +402,10 @@ body {
   width: 100%;
   height: 100%;
   background: #d9e7ed;
+
   .loading-container {
-    // height: 100px;
     position: relative;
-    // width: 100px;
     border-radius: 100%;
-    // margin: 40px auto;
 
     #loading-text {
       -moz-animation: loading-text-opacity 2s linear 0s infinite normal;
@@ -449,6 +459,7 @@ body {
     transform-origin: 50% 50%;
   }
 }
+
 .title {
   font-size: 22px;
   line-height: 1.1;
@@ -458,16 +469,18 @@ body {
   margin-bottom: 20px;
   font-weight: 500;
 }
+
 .pt-5,
 .py-5 {
   padding-top: 3rem !important;
 }
+
 #feature p {
   font-size: 18px;
   line-height: 25px;
-  /* font-size: 14px; */
   color: #212529;
 }
+
 .section-heading p {
   font-size: 18px;
   font-weight: 300;
@@ -483,11 +496,13 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 .modal-content {
   height: 100%;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
     rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
+
 .modal-header {
   height: 25%;
   display: flex;
@@ -495,6 +510,7 @@ body {
   align-items: center;
   background: #24343ced;
 }
+
 .modal-title {
   font-weight: 700;
   color: #203139;
@@ -502,22 +518,26 @@ body {
   font-size: 125%;
   color: #fff;
 }
+
 .modal-body {
   height: 50%;
   padding: 3%;
 }
+
 .modal-bodyText {
   font-weight: 500;
   color: #556d78;
 
   font-size: 95%;
 }
+
 .modal-footer {
   height: 25%;
   display: flex;
   justify-content: center;
   padding: 1%;
 }
+
 .modal-footerBtn {
   display: flex;
   align-items: center;
@@ -531,13 +551,15 @@ body {
   font-weight: 700;
   color: #ffffff;
 }
+
 .modal-footerBtn:active {
   transform: scale(0.95);
 }
 
 ion-modal {
-  width: 80% !important;
-  height: 80% !important;
+  width: 95% !important;
+  height: 90% !important;
+  border-radius: 1rem;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -549,4 +571,164 @@ ion-modal {
 ion-modal.custom-modal::part(content) {
   --width: 100%;
   --height: 100%;
+}
+
+.btnSubmit {
+  display: flex;
+  align-items: center;
+  background-color: #203139;
+  border-radius: 12rem;
+  width: 20%;
+  height: 60%;
+  padding: 1%;
+  justify-content: center;
+  z-index: 1;
+  margin: 1% 2% 1% 0%;
+}
+
+.btnCancel {
+  display: flex;
+  align-items: center;
+  background-color: #6e6e6e;
+  border-radius: 12rem;
+  width: 20%;
+  height: 60%;
+  padding: 1%;
+  justify-content: center;
+  z-index: 1;
+  margin: 1% 2% 1% 0%;
+}
+
+.btnSubmit:active {
+  transform: scale(0.9);
+}
+
+.btnSubmitText {
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 100%;
+  margin: 2% 8%;
+}
+
+.custom-toastMsg {
+  position: fixed;
+  /* Fixed positioning so it stays in place */
+  right: 10px;
+  /* Position on the right side */
+  bottom: 5px;
+  /* Position from the top */
+  background-color: #f1f1f1;
+  color: #000000;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 20px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgb(94 134 153) 0px -3px 0px inset;
+  z-index: 9999;
+  opacity: 0;
+  /* Initially hidden */
+  transform: translateY(20px);
+  /* Initially moved slightly down */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  /* Smooth transition for opacity and transform */
+
+  /* Applying the slide-up animation */
+  &.toast-show {
+    opacity: 1;
+    transform: translateY(0);
+    /* Move to its normal position */
+    animation: slide-up 0.5s ease-out;
+    /* Slide-up animation */
+  }
+
+  /* Slide-out animation when it is removed */
+  &.toast-hide {
+    opacity: 0;
+    transform: translateX(100%);
+    /* Slide to the right */
+    animation: slide-out 0.5s ease-in;
+    /* Slide-out animation */
+  }
+}
+
+.custom-toast {
+  position: fixed;
+  /* Fixed positioning so it stays in place */
+  right: 10px;
+  /* Position on the right side */
+  top: 5px;
+  /* Position from the top */
+  background-color: #f1f1f1;
+  color: #000000;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 16px;
+  box-shadow: rgb(240 240 255 / 25%) 0px 30px 60px -12px inset,
+    rgb(123 148 160) 0px 18px 36px -18px inset;
+  z-index: 9999;
+  opacity: 0;
+  /* Initially hidden */
+  transform: translateY(20px);
+  /* Initially moved slightly down */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  /* Smooth transition for opacity and transform */
+
+  /* Applying the slide-up animation */
+  &.toast-show {
+    opacity: 1;
+    transform: translateY(0);
+    /* Move to its normal position */
+    animation: slide-up 0.5s ease-out;
+    /* Slide-up animation */
+  }
+
+  /* Slide-out animation when it is removed */
+  &.toast-hide {
+    opacity: 0;
+    transform: translateX(100%);
+    /* Slide to the right */
+    animation: slide-out 0.5s ease-in;
+    /* Slide-out animation */
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+    /* Start slightly below */
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    /* End at normal position */
+  }
+}
+
+@keyframes slide-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+    /* Start at normal position */
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+    /* End at the right edge of the screen */
+  }
+}
+
+.custom-toast p {
+  margin: 0;
+  /* Remove margin from the paragraph */
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+  text-align: center;
 }

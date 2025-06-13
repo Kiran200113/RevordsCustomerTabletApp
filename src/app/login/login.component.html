@@ -1,37 +1,69 @@
 <ion-content [fullscreen]="true">
-
   <body>
     <div class="body" *ngIf="showLoginForm == false">
       <div class="wrapper">
         <div class="logo">
-          <img src="../../assets/companylogo.png" alt="">
+          <img src="https://s3.us-west-1.amazonaws.com/revords.live.files/RevordsTrademarkLogo.png" alt="" />
         </div>
         <form>
           <div class="form-field d-flex align-items-center">
             <span>
-              <ion-icon name="person-circle-outline" style="margin-top: 35%;"></ion-icon>
+              <ion-icon
+                name="person-circle-outline"
+                style="margin-top: 35%"
+              ></ion-icon>
             </span>
-            <input type="email" name="Email" id="Email" [(ngModel)]="Email" placeholder="Username" autocomplete="off">
+            <input
+              type="email"
+              name="Email"
+              id="Email"
+              [(ngModel)]="Email"
+              placeholder="Username"
+              autocomplete="off"
+            />
           </div>
           <div class="form-field d-flex align-items-center">
             <span>
-              <ion-icon name="key" style="margin-top: 30%;"></ion-icon>
+              <ion-icon name="key" style="margin-top: 30%"></ion-icon>
             </span>
-            <input type="password" name="password" id="pwd" [(ngModel)]="Password" placeholder="Password">
+            <input
+              type="password"
+              name="password"
+              id="pwd"
+              [(ngModel)]="Password"
+              placeholder="Password"
+            />
           </div>
-          <button type="submit" class="btn mt-3" (click)='signUp()'>Login</button>
+          <button type="submit" class="btn mt-3" (click)="signUp()">
+            Login
+          </button>
         </form>
-        <div class="text-center fs-6">
+        <!-- <div class="text-center fs-6">
           <a href="#">Forget password?</a>
-        </div>
+        </div> -->
+      </div>
+
+      <div
+        *ngIf="showToast"
+        class="custom-toast"
+        [ngClass]="{ 'toast-show': showToast, 'toast-hide': !showToast }"
+      >
+        <p
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+        >
+          {{ toastMsg }}
+          <img src="../../assets/cancel.png" style="width: 8%; float: right" (click)="dismissToast()" />
+        </p>
       </div>
     </div>
     <div class="loadContainer" *ngIf="isLoadingMember">
       <div class="loading-container">
         <div class="loading"></div>
-        <div id="loading-text">          
-          LOADING
-        </div>
+        <div id="loading-text">LOADING</div>
       </div>
     </div>
   </body>

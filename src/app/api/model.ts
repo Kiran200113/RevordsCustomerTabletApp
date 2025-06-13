@@ -23,4 +23,6 @@ export class User {
     IsAgeRestriction: boolean;
     businessGroupName: string;
     sourceName : string;
+    accessToken: string;
+    toid: number;
 }

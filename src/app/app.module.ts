@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
@@ -15,8 +15,12 @@ import { Market } from '@awesome-cordova-plugins/market/ngx';
 import { BackgroundService } from './api/services/backgroundService';
 import { BackgroundMode } from '@awesome-cordova-plugins/background-mode/ngx';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { InAppUpdate } from '@awesome-cordova-plugins/in-app-update/ngx';
-import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
+import { TokenInterceptor } from './api/services/token.interceptor';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { NetworkService } from './api/services/NetworkService';
+import { NgxIndexedDBModule } from 'ngx-indexed-db';
+import { dbConfig } from './api/services/indexed-db.config';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,10 +30,11 @@ import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule, 
+    NgxIndexedDBModule.forRoot(dbConfig)   
   ],
   providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },Deploy,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     GetMemberProfileService,
     Model,
     MembersVistLog,
@@ -39,7 +44,10 @@ import { Deploy } from 'cordova-plugin-ionic/dist/ngx';
     BackgroundMode,
     BackgroundService,
     Market,
-    InAppUpdate
+    File,
+    Network,
+    NetworkService,
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

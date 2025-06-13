@@ -28,11 +28,16 @@ export class RevordSummaryPage implements OnInit {
   countDownRevordSummary: any = 0;
   myIntervalrevordsummary: any;
   constnt: any = CONSTANTS;
-  bgImgPath2: any =
-    CONSTANTS.DownloadAPK_ENDPOINT + localStorage.getItem('BgImg1');
+  bgImgPath2: any = localStorage.getItem('BgImg1');
   isTimeOut: any;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    if (!localStorage.getItem('JWT_Token')) {
+      localStorage.clear();
+      this.router.navigate(['']);
+      return;
+    }
+  }
   @ViewChild('cdRevordSummary', { static: false })
   private countdownRevordSummary: CountdownComponent;
 

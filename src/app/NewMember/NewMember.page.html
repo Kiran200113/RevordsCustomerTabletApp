@@ -3,10 +3,18 @@
   <!-- <div class="loginbgblack"></div> -->
   <div class="RewardContainer" *ngIf="!isLoading">
     <div class="body" [formGroup]="multistep">
+      <div *ngIf="showToast" class="custom-toast" [ngClass]="{'toast-show': showToast, 'toast-hide': !showToast}">
+        <p style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          ">
+          {{toastMsg}}
+          <img src="../../assets/cancel.png" style="width: 8%; float: right" (click)="dismissToast()" />
+        </p>
+      </div>
       <div class="wrapper" formGroupName="addMemberDetails">
-        <img
-          src="../../assets/backButton.png"
-          style="
+        <img src="../../assets/backButton.png" style="
             position: absolute;
             width: 4%;
             top: 2%;
@@ -14,161 +22,80 @@
             background: white;
             border-radius: 50%;
             padding: 1%;
-          "
-          (click)="back()"
-        />
+          " (click)="back()" />
 
         <div class="countDownText">
-          <countdown
-            #cd
-            (event)="handleEvent($event)"
-            [config]="config"
-          ></countdown>
+          <countdown #cd (event)="handleEvent($event)" [config]="config"></countdown>
+        </div>
+        <!-- <img src="../../assets/companylogo.png" width="50%" /> -->
+        <div class="text-center">
+          <img src="https://s3.us-west-1.amazonaws.com/revords.live.files/RevordsTrademarkLogo.png" width="50%" />
         </div>
 
-        <h3 style="text-align: center; color: #213139">
+        <h3 style="text-align: center; color: #213139; margin: 5%">
           Enter Your Information
         </h3>
-        <div class="form-field d-flex align-items-center">
+
+        <div class="d-flex align-items-center" style="margin-bottom: 5%">
           <!-- <span><fa-icon icon="envelope"></fa-icon></span> -->
-          <input
-            type="text"
-            name="name"
-            id="name"
-            placeholder="Name"
-            formControlName="name"
-            autocomplete="off"
-          />
-        </div>
-        <div class="form-field d-flex align-items-center">
-          <!-- <span><fa-icon icon="envelope"></fa-icon></span> -->
-          <input
-            type="email"
-            placeholder="abc@gmail.com"
-            formControlName="email"
-            autocomplete="off"
-            [class.is-invalid]="Email?.invalid && Email?.touched"
-          />
-        </div>
-        <div class="d-flex align-items-center">
-          <ion-col size="2" style="color: #272727">Birthday</ion-col>
-          <ion-col
-            size="5"
-            class="d-flex justify-content-center align-items-center"
-            style="height: 100%"
-          >
-            <div class="col-md-10 DropDownContainer" style="height: 100%">
-              <div
-                class="dropdown fs-dropdown birthday-dropdown month-dropdown disabled"
-                style="height: 100%"
-              >
-                <a
-                  class="fs-dropdown-toggle ng-isolate-scope"
-                  open-class="fs-dropdown-open"
-                  ng-disabled="memberInfo.web_registered"
-                  fs-track-tap="Birth_Month"
-                  disabled="disabled"
-                  style="height: 100%"
-                >
-                  <div class="selected-option" style="height: 100%">
-                    <ion-select
-                      placeholder="Select a Month"
-                      (ionChange)="onMonthChange()"
-                      style="
-                        height: 100%;
-                        background-color: #e3e7ea;
-                        font-weight: 800;
-                        color: #000000;
-                        padding-left: 5%;
-                        font-family: Satoshi Variable, 'Source Sans Pro';
-                        border: none;
-                        border-radius: 10px;
-                        box-shadow: inset 8px 8px 8px #cbced1,
-                          inset -8px -8px 8px #fff;
-                      "
-                      formControlName="monthID"
-                    >
-                      <ion-select-option
-                        *ngFor="let month of monthlist"
-                        [value]="month"
-                        >{{ month }}</ion-select-option
-                      >
-                    </ion-select>
-                  </div>
-                </a>
-              </div>
-            </div>
+          <ion-col size="2" style="color: #272727">Name</ion-col>
+          <ion-col size="10" class="d-flex justify-content-center align-items-center form-field" style="height: 100%">
+            <input type="text" name="name" id="name" placeholder="Name" formControlName="name" autocomplete="off" />
           </ion-col>
-          <ion-col
-            size="4"
-            class="d-flex justify-content-center align-items-center"
-            style="height: 100%"
-          >
-            <div class="col-md-10 DropDownContainer" style="height: 100%">
-              <div
-                class="dropdown fs-dropdown birthday-dropdown day-dropdown disabled"
-                style="height: 100%"
-              >
-                <a
-                  class="fs-dropdown-toggle ng-isolate-scope"
-                  open-class="fs-dropdown-open"
-                  ng-disabled="memberInfo.web_registered"
-                  fs-track-tap="Birth_Day"
-                  disabled="disabled"
-                  style="height: 100%"
-                >
-                  <div class="selected-option" style="height: 100%">
-                    <ion-select
-                      placeholder="Select a Day"
-                      style="
-                        height: 100%;
-                        background-color: #e3e7ea;
-                        font-weight: 800;
-                        color: #000000;
-                        padding-left: 5%;
-                        font-family: Satoshi Variable, 'Source Sans Pro';
-                        border: none;
-                        border-radius: 10px;
-                        box-shadow: inset 8px 8px 8px #cbced1,
-                          inset -8px -8px 8px #fff;
-                      "
-                      formControlName="dayID"
-                    >
-                      <ion-select-option
-                        *ngFor="let day of days"
-                        [value]="day"
-                        [disabled]="!isMonthSelect"
-                        >{{ day }}</ion-select-option
-                      >
-                    </ion-select>
-                  </div>
-                </a>
+        </div>
+        <div class="d-flex align-items-center" style="margin-bottom: 5%">
+          <!-- <span><fa-icon icon="envelope"></fa-icon></span> -->
+          <ion-col size="2" style="color: #272727">Email</ion-col>
+          <ion-col size="10" class="d-flex justify-content-center align-items-center form-field" style="height: 100%">
+            <input type="email" placeholder="abc@gmail.com" formControlName="email" autocomplete="off"
+              [class.is-invalid]="Email?.invalid && Email?.touched" />
+          </ion-col>
+        </div>
+
+        <div class="d-flex align-items-center" style="margin-bottom: 1%">
+          <ion-col size="2" style="color: #272727">Birthdate</ion-col>
+          <ion-col size="10" class="d-flex justify-content-center align-items-center form-field" style="height: 100%">
+            <input formControlName="birthdate" type="text" placeholder="MM/DD/YYYY" maxlength="10" inputmode="numeric"
+              pattern="[0-9/]*" (keydown)="onKeyDown($event)" (input)="formatDate($event)" (blur)="onInputBlur()" />
+          </ion-col>
+        </div>
+        <div style="height: 15px; margin-bottom: 3%; color: #974141" class="d-flex align-items-center">
+          <ion-col size="2"></ion-col>
+          <ion-col size="10">
+            <div
+              *ngIf="multistep.get('addMemberDetails.birthdate')?.invalid && multistep.get('addMemberDetails.birthdate')?.touched">
+              <div *ngIf="multistep.get('addMemberDetails.birthdate')?.hasError('required')">
+                Birth date is required.
+              </div>
+              <div *ngIf="multistep.get('addMemberDetails.birthdate')?.hasError('invalidDate')">
+                Enter a valid birth date.
+              </div>
+              <div *ngIf="multistep.get('addMemberDetails.birthdate')?.hasError('futureDate')">
+                Birth date cannot be in the future.
+              </div>
+              <div *ngIf="multistep.get('addMemberDetails.birthdate')?.hasError('underage')">
+                You must be atleast {{ageRestrictionYear}} years old to proceed.
               </div>
             </div>
           </ion-col>
         </div>
+
         <p style="margin-top: 3%; color: #213139" *ngIf="dynamicField != undefined && dynamicField.isOptInRequired">
-          You agree to receive occasional updates and promotions via text messages.
+          You agree to receive occasional updates and promotions via text
+          messages.
           <span style="color: #c90000">*</span>
         </p>
         <div class="d-flex align-items-center" *ngIf="dynamicField != undefined && dynamicField.isOptInRequired">
           <ion-radio-group value="true" formControlName="optIn">
-            <ion-radio value="true" labelPlacement="end"
-              >Yes (opt-in for SMS)</ion-radio
-            ><br />
-            <ion-radio value="false" labelPlacement="end"
-              >No (opt-out)</ion-radio
-            ><br />
+            <ion-radio value="true" labelPlacement="end">Yes (opt-in for SMS)</ion-radio><br />
+            <ion-radio value="false" labelPlacement="end">No (opt-out)</ion-radio><br />
           </ion-radio-group>
         </div>
         <div style="margin-top: 3%" *ngIf="isAgeRestriction">
           <ion-col size="6" style="color: #272727">
-            <ion-checkbox labelPlacement="end" formControlName="isOverAged"
-              >I hereby certify that I am at least 21 years old.<span
-                style="color: #c90000"
-                >*</span
-              ></ion-checkbox
-            >
+            <ion-checkbox labelPlacement="end" formControlName="isOverAged">I hereby certify that I am at least
+              {{ageRestrictionYear}} years
+              old.<span style="color: #c90000">*</span></ion-checkbox>
           </ion-col>
         </div>
         <button type="submit" class="btn mt-3" (click)="submit()">
@@ -183,11 +110,8 @@
       <!-- <img src="../../assets/PopupBGImg.jpg" alt=""> -->
       <!-- <h2 class="mb-2">Great!</h2> -->
       <div [innerHTML]="OptInPopupText"></div>
-      <button
-        (click)="closePopupOptin()"
-        class="btn p-2 m-3"
-        style="background-color: #3e78a3; color: #fff; font-size: 20px"
-      >
+      <button (click)="closePopupOptin()" class="btn p-2 m-3"
+        style="background-color: #3e78a3; color: #fff; font-size: 20px">
         Continue
         <img style="width: 4%" src="./assets/arrowright.png" />
       </button>
@@ -201,7 +125,7 @@
     <div class="loading-container">
       <div class="loading"></div>
       <div id="loading-text">
-        <img class="logo-dWq" src="../../assets/companylogo.png" />
+        <img class="logo-dWq" src="https://s3.us-west-1.amazonaws.com/revords.live.files/RevordsTrademarkLogo.png" />
       </div>
     </div>
   </div>

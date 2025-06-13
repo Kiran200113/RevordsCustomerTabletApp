@@ -17,14 +17,14 @@ import { MembersVistLog, Model } from '../tab2/model';
     FormsModule,
     ExploreContainerComponentModule,
     LoginComponentRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    
   ],
   declarations: [LoginComponent],
   providers: [
     GetMemberProfileService,
-    
     Model,
-    MembersVistLog
+    MembersVistLog,
   ],
 })
 export class LoginModule { }

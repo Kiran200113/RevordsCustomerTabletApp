@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Model, ActivityHistory } from './model';
 import { GetMemberProfileService } from '../api/services/get-member-profile.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,13 +11,16 @@ import {
   CountdownConfig,
   CountdownEvent,
 } from 'ngx-countdown';
+import { ActivityHistoryService } from '../api/services/activityHistoryService';
+import { SpinWheelService } from '../api/services/spinWheelService';
+import { LoggingService } from '../api/services/loggingService';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
 })
-export class Tab2Page {
+export class Tab2Page implements OnDestroy {
   number: any = Math.ceil(Math.random() * 1000);
   memberId: any;
   memberTableId: any;
@@ -59,6 +62,11 @@ export class Tab2Page {
     formatDate: ({ date }) => `${date / 1000}`,
   };
   isTimeOut: any;
+  showToast: boolean = false;
+  toastMsg: any = '';
+  toastID: any;
+  ApiTimeoutPeriod: any;
+  timeoutId: any;
 
   @ViewChild('wheel', { static: false }) wheel: ElementRef;
   @ViewChild('cdBefore', { static: false })
@@ -70,12 +78,22 @@ export class Tab2Page {
     public dataService: DataService,
     public activatedRoute: ActivatedRoute,
     private _memberProfile: GetMemberProfileService,
+    private _loggingService: LoggingService,
+    private _spinWheelService: SpinWheelService,
+    private _activityHistory: ActivityHistoryService,
     private router: Router,
     private memberData: Model,
     private activity: ActivityHistory,
     private toastCtrl: ToastController,
     private platform: Platform
   ) {
+    if (!localStorage.getItem('JWT_Token')) {
+      localStorage.clear();
+      this.router.navigate(['']);
+      return;
+    }
+    this.ApiTimeoutPeriod = JSON.parse(localStorage.getItem("ErroMessageData") || '{}');
+
     let member: any = JSON.parse(localStorage.getItem('memberDetails') || '{}');
     this.memberId = member.memberId;
     this.memberTableId = member.memberTableID;
@@ -92,6 +110,16 @@ export class Tab2Page {
   private countdownNewOpt: CountdownComponent;
 
   ionViewWillEnter() {
+    this.initializeCountdown(); // Restart countdown when entering the page
+    if (this.countdownBefore) {
+      this.countdownBefore.restart(); // Ensure countdown starts fresh
+    }
+    if (this.countdownAfter) {
+      this.countdownAfter.restart(); // Ensure countdown starts fresh
+    }
+
+    this.GetSpinWheelProbabilityByMemberIDBusinessGroupID();
+
     let currentDate = CONSTANTS.ISODate();
     this.activity.memberId = parseInt(this.memberId);
     this.activity.activityDate = currentDate;
@@ -110,7 +138,7 @@ export class Tab2Page {
     this.activity.spinWheelText = 'Spin Wheel Loaded...';
     this.activity.isSpinRedeem = false;
 
-    this._memberProfile.PostActivityHistory(this.activity).subscribe(
+    this._activityHistory.PostActivityHistory(this.activity).subscribe(
       (data) => {
         this.ActivityHistoryID = data.id;
         this.spinning = false;
@@ -120,12 +148,16 @@ export class Tab2Page {
           message: error.statusText,
           duration: 3000,
         });
+        this._loggingService.PostLogger(
+          'tab2-ts',
+          'ionViewWillEnter()',
+          error.message
+        );
         // toast.present();
       }
     );
 
     this.isSpin = true;
-    this.GetSpinWheelProbabilityByMemberIDBusinessGroupID();
     this.number = Math.ceil(Math.random() * 1000);
     this.spinning = false;
     this.spanclassname = 'arrow1';
@@ -136,25 +168,67 @@ export class Tab2Page {
 
     const subscription = this.platform.backButton.subscribeWithPriority(
       99999,
-      async () => {}
+      async () => { }
     );
   }
 
-  ngOnInit() {}
+  ngOnInit() { 
+    this.initializeCountdown();
+  }
+
+  initializeCountdown() {
+    const counterBeforeSpin =
+      JSON.parse(localStorage.getItem('DynamicField') || '{}').counterBeforeSpin || 60;
+
+    this.configBefore = {
+      leftTime: counterBeforeSpin, // Set countdown time
+      formatDate: ({ date }) => `${date / 1000}`,
+    };
+
+    const counterAfterSpin =
+      JSON.parse(localStorage.getItem('DynamicField') || '{}').counterAfterSpin || 60;
+
+    this.configAfter = {
+      leftTime: counterAfterSpin, // Set countdown time
+      formatDate: ({ date }) => `${date / 1000}`,
+    };
+  }
+
+  ionViewWillLeave() {
+    if (this.countdownBefore) {
+      this.countdownBefore.stop(); // Stop countdown to prevent background execution
+    }
+    if (this.countdownAfter) {
+      this.countdownAfter.stop(); // Stop countdown to prevent background execution
+    }
+  }
 
   handleEventBefore(e: CountdownEvent) {
     if (e.left <= 0) {
       this.isTimeOut = true;
       this.spinning = true;
       this.showSpinCountdown = false;
-      this.router.navigate(['tab1']);
+
+      this.router.navigate(['tab1']); // Only navigate if the component is active
+
+
       let updatedActivityHistory = {
         id: this.ActivityHistoryID,
         spinWheelText: 'Spin Wheel Timed out!',
       };
-      this._memberProfile
+
+      this._activityHistory
         .PutActivityHistoriesForSpinWheel(4, updatedActivityHistory)
-        .subscribe((data) => {});
+        .subscribe(
+          (data) => { },
+          async (error) => {
+            this._loggingService.PostLogger(
+              'tab2-ts',
+              'handleEventBefore(e: CountdownEvent)',
+              error.message
+            );
+          }
+        );
     }
   }
 
@@ -163,7 +237,9 @@ export class Tab2Page {
       this.isTimeOut = true;
       this.spinning = true;
       this.showSpinCountdown = false;
-      this.router.navigate(['tab1']);
+
+      this.router.navigate(['tab1']); // Only navigate if the component is active
+
     }
   }
 
@@ -179,7 +255,7 @@ export class Tab2Page {
   }
 
   GetSpinWheelProbabilityByMemberIDBusinessGroupID() {
-    this._memberProfile
+    this._spinWheelService
       .GetSpinWheelProbabilityByMemberIDBusinessGroupID(
         this.memberId,
         this.BusinessGroupID,
@@ -190,7 +266,11 @@ export class Tab2Page {
           this.spinWheelIndex = data['spinwheelindex'];
         },
         async (error) => {
-          // console.log(error);
+          this._loggingService.PostLogger(
+            'tab2-ts',
+            'GetSpinWheelProbabilityByMemberIDBusinessGroupID()',
+            error.message
+          );
         }
       );
   }
@@ -210,6 +290,10 @@ export class Tab2Page {
   }
 
   async Spin() {
+    if (this.spinWheelIndex == undefined || this.spinWheelIndex == null) {
+      return;
+    }
+
     if (this.countdownBefore != undefined) {
       this.countdownBefore.stop();
     }
@@ -222,7 +306,7 @@ export class Tab2Page {
     this.wheel.nativeElement.style.transform =
       'rotate(' + (rotate + 30 * 360) + 'deg)';
     this.wheel.nativeElement.style.transition = 'all 15s';
-    setTimeout(() => {
+    this.timeoutId = setTimeout(() => {
       this.spanclassname = 'arrow1 arrowanimation';
       this.spanclasshover = 'spanHover spanHoveranimation';
 
@@ -263,21 +347,37 @@ export class Tab2Page {
                   spinWheelText: this.winningPrize,
                   isSpinRedeem: true,
                 };
-                this._memberProfile
+                this._activityHistory
                   .PutActivityHistoriesForSpinWheel(2, updatedActivityHistory)
-                  .subscribe();
+                  .subscribe(
+                    () => { },
+                    async (error) => {
+                      this._loggingService.PostLogger(
+                        'tab2-ts',
+                        'Spin()',
+                        error.message
+                      );
+                    }
+                  );
               },
               async (error) => {
+                this._loggingService.PostLogger(
+                  'tab2-ts',
+                  'Spin()',
+                  error.message
+                );
                 if (error.status == 0) {
                   this.showSpinCountdown = false;
                   if (this.countdownAfter != undefined) {
                     this.countdownAfter.stop();
                   }
-                  this._memberProfile.toastMessage(
-                    'Something went wrong.',
-                    2500,
-                    'custom-toast'
-                  );
+
+                  this.showToast = true;
+                  this.toastMsg = this.ApiTimeoutPeriod.errorMessage;
+                  // Hide the toast after 2 seconds
+                  this.toastID = setTimeout(() => {
+                    this.showToast = false;
+                  }, 3000);
                   this.router.navigate(['/tab1']);
                 }
               }
@@ -303,21 +403,28 @@ export class Tab2Page {
               spinWheelID: this.spinWheelOpts[i].id,
               spinWheelText: this.winningPrize,
             };
-            this._memberProfile
+            this._activityHistory
               .PutActivityHistoriesForSpinWheel(3, updatedActivityHistory)
               .subscribe(
-                (data) => {},
+                (data) => { },
                 async (error) => {
+                  this._loggingService.PostLogger(
+                    'tab2-ts',
+                    'Spin()',
+                    error.message
+                  );
                   if (error.status == 0) {
                     this.showSpinCountdown = false;
                     if (this.countdownAfter != undefined) {
                       this.countdownAfter.stop();
                     }
-                    this._memberProfile.toastMessage(
-                      'Something went wrong.',
-                      2500,
-                      'custom-toast'
-                    );
+
+                    this.showToast = true;
+                    this.toastMsg = this.ApiTimeoutPeriod.errorMessage;
+                    // Hide the toast after 2 seconds
+                    this.toastID = setTimeout(() => {
+                      this.showToast = false;
+                    }, 3000);
                     this.router.navigate(['/tab1']);
                   }
                 }
@@ -332,5 +439,85 @@ export class Tab2Page {
       this.showSpinCountdown = true;
       this.prog2 = -100;
     }, 18000);
+  }
+
+  // async Spin() {
+  //   if (this.countdownBefore !== undefined) {
+  //     this.countdownBefore.stop();
+  //   }
+
+  //   this.showSpinCountdown = false;
+  //   this.spinning = true;
+  //   this.isSpin = false;
+
+  //   let rotate = this.spinWheelIndex * 45;
+  //   let rand = Math.random();
+  //   this.number += Math.ceil(rand * 10000);
+  //   this.wheel.nativeElement.style.transform =
+  //     'rotate(' + (rotate + 30 * 360) + 'deg)';
+  //   this.wheel.nativeElement.style.transition = 'all 15s';
+
+  //   setTimeout(() => {
+  //     this.spanclassname = 'arrow1 arrowanimation';
+  //     this.spanclasshover = 'spanHover spanHoveranimation';
+
+  //     for (let i = 0; i < this.spinWheelOpts.length; i++) {
+  //       if (i === this.spinWheelIndex) {
+  //         this.winningPrize = this.spinWheelOpts[i].arctext;
+
+  //         if (this.spinWheelOpts[i].isInteger) {
+  //           let p = Number(this.winningPrize.replace(' Points', ''));
+  //           let currentDate = CONSTANTS.ISODate();
+  //           let updatedPoints = {
+  //             memberId: this.memberId,
+  //             currentPoints: p,
+  //             lastVisitDate: currentDate,
+  //             lastModifiedDate: currentDate,
+  //             lastModifiedBy: this.BusinessLocationID,
+  //           };
+
+  //           this._memberProfile.PutMemberProfilePoints(updatedPoints).subscribe(
+  //             () => {
+  //               localStorage.removeItem('memberDetails');
+  //               this.memberData.memberId = this.memberId;
+  //               this.memberData.memberTableID = this.memberTableId;
+  //               this.memberData.name = this.memberName;
+  //               this.memberData.memberSince = this.memberSince;
+  //               this.memberData.memberImg = this.memberImage;
+  //               this.memberData.currentPoints = this.memberCurrentPoints;
+  //               this.memberData.spinWheelPoint = p;
+  //               this.memberData.badgeColor = this.badgeColor;
+  //               localStorage.setItem(
+  //                 'memberDetails',
+  //                 JSON.stringify(this.memberData)
+  //               );
+  //             },
+  //             async (error) => {
+  //               // this.handleNetworkError(error);
+  //             }
+  //           );
+  //         } else {
+  //           // Handle non-integer spin wheel logic here
+  //         }
+  //       }
+  //     }
+  //   }, 15300);
+
+  //   setTimeout(() => {
+  //     this.openPopup();
+  //     this.showSpinCountdown = true;
+  //     this.prog2 = -100;
+  //   }, 18000);
+  // }
+
+  ngOnDestroy() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+  }
+
+  dismissToast() {
+    this.showToast = false;
+    clearTimeout(this.toastID);
   }
 }

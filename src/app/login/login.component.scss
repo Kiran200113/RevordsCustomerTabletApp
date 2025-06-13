@@ -71,9 +71,9 @@ body {
         letter-spacing: 1.3px;
     }
 
-    .btn:hover {
-        background-color: #039BE5;
-    }
+    // .btn:hover {
+    //     background-color: #039BE5;
+    // }
 
     .form-field {
         padding-left: 10px;
@@ -388,3 +388,61 @@ body {
         transform-origin: 50% 50%;
     }
 }
+
+.custom-toast {
+    position: fixed; /* Fixed positioning so it stays in place */
+    right: 10px;      /* Position on the right side */
+    bottom: 5px;         /* Position from the top */
+    background-color: #f1f1f1;
+    color: #000000;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 20px;
+    // box-shadow: rgb(240 240 255 / 25%) 0px 30px 60px -12px inset,
+    //   rgb(123 148 160) 0px 18px 36px -18px inset;
+    z-index: 9999;
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px); /* Initially moved slightly down */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth transition for opacity and transform */
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgb(94 134 153) 0px -3px 0px inset;
+    /* Applying the slide-up animation */
+    &.toast-show {
+      opacity: 1;
+      transform: translateY(0); /* Move to its normal position */
+      animation: slide-up 0.5s ease-out; /* Slide-up animation */
+    }
+  
+    /* Slide-out animation when it is removed */
+    &.toast-hide {
+      opacity: 0;
+      transform: translateX(100%); /* Slide to the right */
+      animation: slide-out 0.5s ease-in; /* Slide-out animation */
+    }
+  }
+  
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);  /* Start slightly below */
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);  /* End at normal position */
+    }
+  }
+  
+  @keyframes slide-out {
+    0% {
+      opacity: 1;
+      transform: translateX(0);  /* Start at normal position */
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(100%); /* End at the right edge of the screen */
+    }
+  }
+  
+  .custom-toast p {
+    margin: 0;  /* Remove margin from the paragraph */
+  }
+  

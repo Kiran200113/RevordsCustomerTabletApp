@@ -230,13 +230,13 @@
     <div class="loading-container">
       <div class="loading"></div>
       <div id="loading-text">
-        <img class="logo-dWq" src="../../assets/companylogo.png" />
+        <img class="logo-dWq" src="https://s3.us-west-1.amazonaws.com/revords.live.files/RevordsTrademarkLogo.png" />
       </div>
     </div>
   </div>
 </ion-content>
 
-<ion-footer style="box-shadow: none !important" *ngIf="!isLoading">
+<ion-footer style="box-shadow: none !important; background-color: #d9e7ed;" *ngIf="!isLoading">
   <ion-row class="btnRow" [ngStyle]="{'background-image': 'url(' + bgImgPath2 + ')' }">
     <p class="countDownText">
       Back To Home in
@@ -247,9 +247,13 @@
       ></countdown
       >s
     </p>
-    <div class="btnSubmit" (click)="submit()">
+    <div class="btnSubmit" (click)="submit()" *ngIf="isFavoriteListExist">
       <p class="btnSubmitText">Continue</p>
       <img width="15%" src="../../assets/arrowright-C81.png" />
+    </div>
+    <div class="btnSubmit" (click)="submit()" *ngIf="!isFavoriteListExist">
+      <p class="btnSubmitText">Done</p>
+      <img width="15%" src="../../assets/checkcircle-9kD.png" />
     </div>
   </ion-row>
 </ion-footer>

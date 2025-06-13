@@ -37,15 +37,29 @@
           <span class="CurrentPointcls">Balance</span>
         </p>
       </ion-col>
-      <!-- <ion-col class="d-flex align-items-center justify-content-center" size="1">
-                <img src="../../assets/wifihigh-6i5.png" alt="" height="35%">
-            </ion-col> -->
     </ion-row>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <div class="spinwheel-HwP">
+    <div
+      *ngIf="showToast"
+      class="custom-toast"
+      [ngClass]="{'toast-show': showToast, 'toast-hide': !showToast}"
+    >
+      <p
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        {{toastMsg}}
+        <img src="../../assets/cancel.png" style="width: 8%; float: right" (click)="dismissToast()" />
+      </p>
+    </div>
+
     <div *ngIf="showSpinCountdown && isSpin" class="countDownText">
       <countdown
         #cdBefore
@@ -64,67 +78,67 @@
     <div class="isolationmode-bhB">
       <span [ngClass]="spanclasshover"></span>
       <div class="outer">
-        <div class="orb">
+        <div class="orb orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb2">
+        <div class="orb2 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb3">
+        <div class="orb3 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb4">
+        <div class="orb4 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb5">
+        <div class="orb5 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb6">
+        <div class="orb6 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb7">
+        <div class="orb7 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb8">
+        <div class="orb8 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb9">
+        <div class="orb9 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb10">
+        <div class="orb10 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb11">
+        <div class="orb11 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb12">
+        <div class="orb12 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb13">
+        <div class="orb13 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb14">
+        <div class="orb14 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb15">
+        <div class="orb15 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="orb16">
+        <div class="orb16 orbCommon">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
@@ -149,35 +163,35 @@
       >
         <span [ngClass]="spanclassname"></span>
 
-        <div class="innerBtn1">
+        <div class="innerBtn1 innerBtn">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="innerBtn2">
+        <div class="innerBtn2 innerBtn">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="innerBtn3">
+        <div class="innerBtn3 innerBtn">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="innerBtn4">
+        <div class="innerBtn4 innerBtn">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="innerBtn5">
+        <div class="innerBtn5 innerBtn">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="innerBtn6">
+        <div class="innerBtn6 innerBtn">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="innerBtn7">
+        <div class="innerBtn7 innerBtn">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>
-        <div class="innerBtn8">
+        <div class="innerBtn8 innerBtn">
           <div [ngClass]="spinning ? 'shine' : '' "></div>
           <div class="light"></div>
         </div>

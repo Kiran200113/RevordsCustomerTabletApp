@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.revordscustomer.app" version="0.0.12" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.revordscustomer.app" version="0.0.20" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Revords Customer</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="revordsforyou@gmail.com" href="https://revords.com">Revords Team</author>
@@ -20,10 +20,11 @@
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="loadUrlTimeoutValue" value="700000" />
     <preference name="android-minSdkVersion" value="22" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <platform name="android">
         <preference name="Scheme" value="http" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
-            <application android:networkSecurityConfig="@xml/network_security_config" />
+            <application android:networkSecurityConfig="@xml/network_security_config" android:requestLegacyExternalStorage="true" />
             <application android:usesCleartextTraffic="true" />
             <application android:allowBackup="false" android:fullBackupContent="false" />
         </edit-config>

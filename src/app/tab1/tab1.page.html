@@ -1,62 +1,45 @@
 <ion-content [fullscreen]="true">
   <div class="loginContainer">
-    <div
-      class="loginbg"
-      [ngStyle]="{'background-image': 'url(' + bgImg + ')' }"
-    ></div>
-    <!-- <div class="loginbgblack"></div> -->
+    <div class="loginbg" [ngStyle]="{'background-image': 'url(' + bgImg + ')' }"></div>
     <div class="loginContent" *ngIf="!isLoading">
       <ion-row style="width: 100%; height: 100%; padding: 1%">
-        <ion-col size="6">
-          <ion-row
-            class="logo d-flex justify-content-center align-items-center"
-          >
-            <div class="logobg d-flex align-items-center">
-              <img
-                height="85%"
-                style="border-radius: 1rem"
-                src="{{businessGroupLogo}}"
-              />
+        <ion-col size="6" style="height: 100%">
+          <ion-row class="logo d-flex align-items-center" style="height: 50%">
+            <div class="logobg d-flex align-items-center justify-content-center" style="height: 55%; width: 100%"
+              *ngIf="toLogo">
+              <img style="border-radius: 1rem; object-fit: contain;
+              max-height: 100%;
+              max-width: 100%;" src="{{toLogo}}" />
+              <!-- <img style="border-radius: 1rem; height:100%; 
+                width: 60%" src="{{toLogo}}" /> -->
+            </div>
+            <div class="logobg d-flex align-items-center justify-content-center" style="height: 45%; width: 100%">
+              <img style="border-radius: 1rem; padding: 1% 0%; object-fit: contain;
+              max-height: 100%;
+              max-width: 100%;" src="{{businessGroupLogo}}" *ngIf="toLogo" />
+              <!-- <img style="border-radius: 1rem; padding: 1% 0%; height:100%; 
+                width: 40%" src="{{businessGroupLogo}}" *ngIf="toLogo" /> -->
+              <img style="border-radius: 1rem; padding: 1% 0%; object-fit: contain;
+              max-height: 100%;
+              max-width: 100%;" src="{{businessGroupLogo}}" *ngIf="!toLogo" />
             </div>
           </ion-row>
           <ion-row style="height: 50%">
             <div class="instructionContainer">
               <div class="instruction" *ngFor="let info of InfoText">
-                <img
-                  class="instructionImg"
-                  src="../../assets/checkcircle-aBK.png"
-                />
+                <img class="instructionImg" src="../../assets/checkcircle-aBK.png" />
                 <p class="instructionText">{{info.informationText}}</p>
               </div>
-              <!-- <div class="instruction">
-                <img class="instructionImg" src="../../assets/checkcircle-aBK.png" />
-                <p class="instructionText">Earn points every time you sign in.</p>
-              </div>
-              <div class="instruction">
-                <img class="instructionImg" src="../../assets/checkcircle-aBK.png" />
-                <p class="instructionText">Instantly redeem points at the store.</p>
-              </div>
-              <div class="instruction">
-                <img class="instructionImg" src="../../assets/checkcircle-aBK.png" />
-                <p class="instructionText">More visits earn more rewards.</p>
-              </div> -->
             </div>
           </ion-row>
         </ion-col>
-        <ion-col
-          size="6"
-          class="d-flex align-items-center justify-content-center"
-        >
+        <ion-col size="6" style="height: 100%" class="d-flex align-items-center justify-content-center">
           <div class="keypadContainer">
-            <img src="../../assets/companylogo.png" width="50%" />
+            <img src="https://s3.us-west-1.amazonaws.com/revords.live.files/RevordsTrademarkLogo.png" width="50%" />
             <div class="keypad">
               <div class="keypadInput">
-                <ion-label
-                  class="ion-text-center keypadInputLabel"
-                  floating
-                  placeholder="(000) 000-0000"
-                  >{{display}}</ion-label
-                >
+                <ion-label class="ion-text-center keypadInputLabel" floating
+                  placeholder="(000) 000-0000">{{display}}</ion-label>
               </div>
               <div class="keypadbtnRow d-flex align-items-center">
                 <div class="keypadBtn" (click)="click('1')">1</div>
@@ -74,77 +57,89 @@
                 <div class="keypadBtn" (click)="click('9')">9</div>
               </div>
               <div class="keypadbtnRow d-flex align-items-center">
-                <div
-                  class="keypadBtn"
-                  style="border: none !important"
-                  (click)="click('delete-left')"
-                >
+                <div class="keypadBtn" style="border: none !important" (click)="click('delete-left')">
                   <ion-icon name="backspace-outline"></ion-icon>
                 </div>
                 <div class="keypadBtn" (click)="click('0')">0</div>
-                <div
-                  class="keypadBtn"
-                  style="border: none !important"
-                  (click)="signUp()"
-                >
+                <div class="keypadBtn" style="border: none !important" (click)="signUp()">
                   <ion-icon name="arrow-forward-outline"></ion-icon>
                 </div>
               </div>
             </div>
-            <p class="keypadText" *ngIf="dynamicField != undefined">
-              <span> {{dynamicField.termsCondText1}}</span>
-              <span
-                style="text-decoration-line: underline; color: #00a100"
-                id="open-modal"
-                (click)="setPrivacyModal(true)"
-              >
-                Terms &amp; Privacy Policy.
-              </span>
-              <span
-                ><br />
-                {{dynamicField.termsCondText2}}
+            <p class="keypadText" *ngIf="dynamicFieldLocationWise != undefined">
+              <span style="display: block;"> {{dynamicFieldLocationWise.termsCondText}}</span>
+
+              <span style="
+                  text-decoration-line: underline;
+                  color: #00a100;                  
+                " id="open-modal" (click)="setPrivacyModal(true)">
+                Terms of Use &amp; Privacy Policy.
               </span>
             </p>
-            <p class="keypadText">App Version: {{currentVersion}}</p>
+            <!-- <p class="keypadText">App Version: {{currentVersion}}</p> -->
           </div>
         </ion-col>
       </ion-row>
     </div>
 
-    <ion-modal
-      [isOpen]="isModalOpen"
-      [backdropDismiss]="false"
-      cssClass="custom-modal"
-    >
+    <div *ngIf="showToastMsg" class="custom-toastMsg"
+      [ngClass]="{'toast-show': showToastMsg, 'toast-hide': !showToastMsg}">
+      <p style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        ">
+        {{toastMsg}}
+        <img src="../../assets/cancel.png" style="width: 8%; float: right" (click)="dismissToast()" />
+      </p>
+    </div>
+
+    <ion-modal [isOpen]="isModalOpen" [backdropDismiss]="false" cssClass="custom-modal">
       <ng-template>
-        <ion-header>
-          <ion-toolbar style="padding: 12px">
-            <img
-              src="../../assets/cancel.png"
-              style="width: 5%; float: right"
-              (click)="setPrivacyModal(false)"
-            />
-            <ion-title>Terms &amp; Privacy Policy</ion-title>
+        <ion-header style="height: 8%">
+          <ion-toolbar style="padding: 0% 2%">
+            <img src="../../assets/cancel.png" style="width: 5%; float: right" (click)="setPrivacyModal(false)"
+              *ngIf="isUserOpenTC" />
+            <ion-title>Terms of Use &amp; Privacy Policy</ion-title>
           </ion-toolbar>
         </ion-header>
-        <ion-content class="ion-padding">
-          <iframe
-            class="webPage"
-            src="https://revords.com/RevordsT&C.html"
-            frameborder="0"
-            style="width: 100%; height: 100%"
-          ></iframe>
+        <ion-content class="ion-padding" style="height: 80%">
+          <iframe class="webPage" [src]="TCHtmlHref" frameborder="0" style="width: 100%; height: 100%"></iframe>
         </ion-content>
+        <ion-footer *ngIf="!isUserOpenTC" style="height: 18%">
+          <div style="height: 25%" [formGroup]="form">
+            <ion-checkbox labelPlacement="end" style="margin-left: 3%" formControlName="termsAndConditions">By checking
+              this box, I agree to the Terms of Use &
+              Privacy Policy.<span style="color: #c90000">*</span></ion-checkbox>
+          </div>
+          <div class="d-flex justify-content-center" style="height: 75%">
+            <div class="btnCancel" (click)="setPrivacyModal(false)">
+              <p class="btnSubmitText">Cancel</p>
+            </div>
+
+            <div class="btnSubmit" (click)="continue()">
+              <p class="btnSubmitText">Continue</p>
+              <img width="15%" src="../../assets/arrowright-C81.png" />
+            </div>
+          </div>
+        </ion-footer>
+        <div *ngIf="showToast" class="custom-toast" [ngClass]="{'toast-show': showToast, 'toast-hide': !showToast}">
+          <p style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            ">
+            You must agree to the Terms of Use & Privacy Policy to proceed.
+            <img src="../../assets/cancel.png" style="width: 5%; float: right" (click)="dismissToast()" />
+          </p>
+        </div>
       </ng-template>
     </ion-modal>
 
     <div class="loadContainer" *ngIf="isLoading">
       <div class="loading-container">
         <div class="loading"></div>
-        <div id="loading-text">
-          LOADING
-          <!-- <img src="../../assets/companylogo.png" /> -->
-        </div>
+        <div id="loading-text">LOADING</div>
       </div>
     </div>
   </div>
